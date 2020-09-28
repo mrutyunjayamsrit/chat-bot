@@ -19,7 +19,7 @@ FinBot: You have Rs 200 \n Anything else I can help with ?
 User: No thanks
 FinBot: Awesome Happy to assist, Good bye
 
-#Following DB and collections are created in Mongo DB :
+# Following DB and collections are created in Mongo DB :
 
 1) DB - chat-session :
    collection - sessions
@@ -42,7 +42,7 @@ FinBot: Awesome Happy to assist, Good bye
 
 By using above database collection we can generate a report on number of users connected and the jurney they went through with FinBot and also we can find out how many users disconnected inbetween the flow by disconnect status.
 
-#API's exposed for the report purpose
+# API's exposed for the report purpose
     Currently API's are exposed without any security keys. we can add the 64bit security for all the GET requests for authentication.
     1) '/currentUser' - this provides the information on the user who is interacting with bot currently.
         ex: {"sessionId":"a5db2678-c05d-4112-98f8-95c09d9357cf","user":"User828059"}
@@ -58,4 +58,5 @@ By using above database collection we can generate a report on number of users c
 # DialogFlow Interaction:-
     Currently I am using the dialogflow npm module to interact with DF to get train the bot with different utterances and getting response from the dialog flow as an intent. If dialogFlow interaction doesn't work due to proxy restrictions we can use fall back method of json files created 'intent.json' and 'content.json'.
 
-#NOTE:- Currently i am running mongoDB locally so bot will run and store a data in local data base.
+# NOTE:- 
+    Currently i am running mongoDB locally so bot will run and store a data in local data base.
