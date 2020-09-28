@@ -8,6 +8,7 @@ const MongoStore = require('connect-mongo')(session)
 const utils = require('./utils/utils');
 const db = require('./database/db');
 
+// Database functions
 const {findDocuments, removeDocument, insertDocuments, updateDocument} = db;
 const sessionId = uuid.v4();
 
@@ -127,6 +128,7 @@ io.on("connection",(socket)=>{
       });
 })
 
+// Api to get 
 app.get('/currentUser',(req, res)=>{
   let session = req.session;
   req.session.user = userConnected;
@@ -153,8 +155,8 @@ app.get('/completedUser',async (req, res)=>{
   let query = {intentVisited:'no_thanks'};
   const totalUsers = await findDocuments(query, '',collection);
   res.send({
-    user: totalUsers,
-    Count: totalUsers.length
+    Count: totalUsers.length,
+    user: totalUsers 
   });
 });
 
@@ -164,7 +166,7 @@ app.get('/disconnectedUser',async (req, res)=>{
   let query2 = {"user": {$ne:null}}
   const totalUsers = await findDocuments(query, query2,collection);
   res.send({
-    user: totalUsers,
-    Count: totalUsers.length
+    Count: totalUsers.length,
+    user: totalUsers
   });
 });
