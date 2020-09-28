@@ -1,8 +1,8 @@
 const { MongoClient } = require('mongodb');
 //const config = require('config');
 //const {MongoURL} = config;
-const URL = 'mongodb://localhost:27017';
-
+//const URL = 'mongodb://localhost:27017';
+const URL = 'mongodb+srv://root:root@auth-qhv4r.mongodb.net/'
 const DbName = 'chatApp';
 let db = '';
 

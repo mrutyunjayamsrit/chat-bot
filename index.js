@@ -34,7 +34,7 @@ app.use(express.static('public'));
 // To create a session
 app.use(session({
   store: new MongoStore({
-    url: 'mongodb://localhost:27017/chat-session'
+    url: 'mongodb+srv://root:root@auth-qhv4r.mongodb.net/chat-session'
     }),
   secret: sessionId,
   resave: false,
