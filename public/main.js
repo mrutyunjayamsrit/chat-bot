@@ -33,7 +33,7 @@ const addNewMessage = ({ user, message }) => {
   const formattedTime = time.toLocaleString("en-US", { hour: "numeric", minute: "numeric" });
 
   const receivedMsg = `
-  <div class="incoming__message" style="text-align: right">
+  <div class="incoming__message" style="width: 320px; padding: 10px; border: 3px solid gray; text-align: right;  ">
     <div class="received__message">
       <p>${message}</p>
       <div class="message__info">
@@ -44,7 +44,7 @@ const addNewMessage = ({ user, message }) => {
   </div>`;
 
   const myMsg = `
-  <div class="outgoing__message">
+  <div class="outgoing__message" style="width: 320px; padding: 10px; border: 3px solid gray; margin:0;">
     <div class="sent__message">
       <p>${message}</p>
       <div class="message__info">

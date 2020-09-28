@@ -109,7 +109,9 @@ io.on("connection",(socket)=>{
           
 
           // get intent deatils and response
-          const intent = utils.check_intent(data.message);
+          //const intent = utils.check_intent(data.message);
+          const intentDetails = await utils.getIntentDetailsFromDF(data.message);
+          const [intent, bot_message] = intentDetails;
           console.log("Intent name: ", intent);
 
           // store intents in db
@@ -122,7 +124,7 @@ io.on("connection",(socket)=>{
           insertDocuments(query2, collection);
 
           // get Bot reply message
-          const bot_message = utils.getBotMessage(intent);
+          //const bot_message = utils.getBotMessage(intent);
           console.log('Bot Message:', bot_message);
           data.message = bot_message;
           data.nick = 'FinBot';
