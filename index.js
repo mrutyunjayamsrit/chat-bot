@@ -3,7 +3,8 @@ const socket = require('socket.io');
 const dialogflow = require('dialogflow');
 const uuid = require('uuid');
 const session = require('express-session');
-const MongoStore = require('connect-mongo')(session)
+const MongoStore = require('connect-mongo')(session);
+const path = require('path');
 
 const utils = require('./utils/utils');
 const db = require('./database/db');
@@ -30,6 +31,10 @@ const server = app.listen(PORT,()=>{
 
 // For reading static HTML files
 app.use(express.static('public'));
+
+app.get('/',(req,res)=>{
+  res.sendFile('./public/index.html', { root: __dirname });
+})
 
 // To create a session
 app.use(session({
