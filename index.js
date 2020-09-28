@@ -21,7 +21,7 @@ let userConnected = '';
 let isDataInserted = false;
 let userQuery = [];
 
-const PORT = 3030;
+const PORT = process.env.PORT || 3030;
 
 const app = express();
 
@@ -30,10 +30,11 @@ const server = app.listen(PORT,()=>{
 });
 
 // For reading static HTML files
-app.use(express.static('public'));
+//app.use(express.static('public'));
+app.use(express.static(path.join(__dirname,"public")));
 
 app.get('/',(req,res)=>{
-  res.sendFile('./public/index.html', { root: __dirname });
+  res.sendFile('index.html', { root: __dirname });
 })
 
 // To create a session
