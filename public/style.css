@@ -1,0 +1,39 @@
+body {
+    font: 13px Helvetica, Arial;
+  }
+
+  html {
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(to right, #57c1eb 0%, #246fa8 100%);
+}
+  
+  form { 
+    background: #000;
+    padding: 3px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+  }
+  
+  form input {
+    border: 0;
+    padding: 10px;
+    width: 85%;
+    margin-right:0.5% ;
+  }
+  
+  form button {
+    width: 9%;
+    background: rgb(130, 224, 255);
+    border: none;
+    padding: 10px;
+  }
+
+  #outgoing__message {
+    justify-items: start;
+  }
+
+  #incoming__message {
+    text-align: right;
+  }
+  

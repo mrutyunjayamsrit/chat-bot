@@ -1,0 +1,20 @@
+{
+    "Intents":[
+        {
+            "intent_name": "welcome",
+            "input_query":"Hello"
+        },
+        {
+            "intent_name":"check_balance",
+            "input_query":"I want to check my balance"
+        },
+        {
+            "intent_name":"anything_else",
+            "input_query":"thanks"
+        },
+        {
+            "intent_name":"no_thanks",
+            "input_query":"No thanks"
+        }
+    ]
+}

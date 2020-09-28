@@ -1,0 +1,16 @@
+{
+    "message":[
+        {
+            "welcome":"How are you doing ?  How can I Help you ?"
+        },
+        {
+            "check_balance":"You have Rs 200 \n Anything else I can help with ?"
+        },
+        {
+            "anything_else":"Anything else I can help with ?"
+        },
+        {
+            "no_thanks":"Awesome Happy to assist, Good bye"
+        }
+    ]
+}
