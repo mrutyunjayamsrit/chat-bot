@@ -1,8 +1,8 @@
 const { MongoClient } = require('mongodb');
-//const config = require('config');
-//const {MongoURL} = config;
+const config = require('config');
+const {MongoURL} = config;
 //const URL = 'mongodb://localhost:27017';
-const URL = 'mongodb+srv://root:root@auth-qhv4r.mongodb.net/'
+const URL = MongoURL;
 const DbName = 'chatApp';
 let db = '';
 
@@ -45,7 +45,6 @@ const findDocuments = function (query, query2 = null, collection1) {
     collection.find(query,query2).toArray((err, docs) => {
       if (err) {
         console.log('Error to read the records');
-        log.error('Error to read the records');
         reject('Not able to fetch details');
       }
       console.log('Found the following records');
@@ -75,7 +74,7 @@ const removeDocument = function(query, collection1) {
   // Get the documents collection
   const collection = db.collection(collection1);
   return new Promise((resolve, reject)=>{
-    collection.deleteOne(query, function(err, result) {
+    collection.deleteMany(query, function(err, result) {
       if(err){
         console.log('Error while removing data');
         log.error('Error while removing data');

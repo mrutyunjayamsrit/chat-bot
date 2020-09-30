@@ -11,6 +11,9 @@
         },
         {
             "no_thanks":"Awesome Happy to assist, Good bye"
+        },
+        {
+            "None_None": "I didn't get you, Please ask queries related to your account"
         }
     ]
 }

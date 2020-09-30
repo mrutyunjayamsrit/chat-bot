@@ -12,6 +12,7 @@ function check_intent(message){
             return data.intent_name;
         }
     }
+    return 'None_None';
 }
 
 function getBotMessage(intent){
@@ -62,13 +63,20 @@ async function getIntentDetailsFromDF(query,projectId = 'echoservice-edde5') {
     console.log(`  Response: ${result.fulfillmentText}`);
     if (result.intent) {
       console.log(`  Intent: ${result.intent.displayName}`);
-      resolve([result.intent.displayName, result.fulfillmentText]);
+      if(result.intent.displayName){
+        resolve([result.intent.displayName, result.fulfillmentText]);
+      }else{
+        resolve(['None_None','I did not get you, Please ask queries related to your account'])
+      }
+      
     } else {
       console.log(`  No intent matched.`);
     }
     })
     
   }
+
+
 
 module.exports={
     check_intent,

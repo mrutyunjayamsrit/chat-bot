@@ -1,17 +1,30 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const socket = require('socket.io');
-const dialogflow = require('dialogflow');
 const uuid = require('uuid');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const path = require('path');
-
+const config = require('config');
 const utils = require('./utils/utils');
+
+const {
+  saveConnectedUsers,
+  saveDisconnectedUsers,
+  saveUserInputMessage,
+  updateUserInputMessage,
+  saveIntentVisited,
+  updateIntentVisited,
+  getCompletedUserdeatils,
+  getDisconnectedUserDetails
+} = require('./utils/dataStore');
+
 const db = require('./database/db');
+const {MongoURL} = config;
 
 // Database functions
-const {findDocuments, removeDocument, insertDocuments, updateDocument} = db;
-const sessionId = uuid.v4();
+const {findDocuments, insertDocuments, updateDocument, removeDocument} = db;
+let sessionId = '';
 
 //console.log(sessionId);
 
@@ -19,6 +32,8 @@ let userConnected = '';
 
 // flag to insert and update
 let isDataInserted = false;
+let isIntentVisited = false;
+let intents = [];
 let userQuery = [];
 
 const PORT = process.env.PORT || 3030;
@@ -30,22 +45,26 @@ const server = app.listen(PORT,()=>{
 });
 
 // For reading static HTML files
-//app.use(express.static('public'));
 app.use(express.static(path.join(__dirname,"public")));
+
+// For parsing the post request body and get requests 
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 app.get('/',(req,res)=>{
   res.sendFile('index.html', { root: __dirname });
-})
+});
+
+let sess = uuid.v4();
 
 // To create a session
 app.use(session({
   store: new MongoStore({
-    url: 'mongodb+srv://root:root@auth-qhv4r.mongodb.net/chat-session'
+    url: `${MongoURL}chat-session`
     }),
-  secret: sessionId,
+  secret: sess,
   resave: false,
-  saveUninitialized: true,
-  cookie: { maxAge: 60000 }
+  saveUninitialized: true
 }));
 
 const io = socket(server);
@@ -55,76 +74,56 @@ const activeUsers = new Set();
 io.on("connection",(socket)=>{
     console.log("socket connected successfully");
 
+    // New User event
     socket.on("new user", function (data) {
         socket.userId = data;
         activeUsers.add(data);
-        console.log('User Connected: ',activeUsers);
         userConnected = socket.userId;
-
+        sessionId = uuid.v4();
         // Store number of users who communicated with bot
-        let collection = 'Users';
-        let query = [{
-          user: userConnected,
-          sessionId: sessionId
-        }];
-        insertDocuments(query, collection);
-        console.log('user: ', userConnected);
+        saveConnectedUsers(userConnected,sessionId);
+        isDataInserted = false;
+        isIntentVisited = false;
+        intents = [];
+        userQuery = [];
         io.emit("new user", [...activeUsers]);
       });
-    
+      
+      // diconnect event
       socket.on("disconnect", () => {
         console.log('User disconnected: ', socket.userId);
-        let query = [{
-          user: socket.userId,
-          sessionId: sessionId,
-          status: 'disconnect'
-        }];
-        let collection = 'Users';
-        insertDocuments(query, collection);
+        saveDisconnectedUsers(socket.userId, sessionId);  
         activeUsers.delete(socket.userId);
         io.emit("user disconnected", socket.userId);
       });
     
+      // chat message event
       socket.on("chat message", async function (data) {
-        
           console.log('Chat Data:', data)
           io.emit("chat message", data);
 
           // Store User queries
           userQuery.push(data.message);
-          let query = [{
-            sessionId: sessionId,
-            user: userConnected,
-            userQuery: userQuery
-          }];
-
-          let collection = 'UserData';
           if(!isDataInserted){
-            insertDocuments(query, collection);
+            saveUserInputMessage(userConnected, userQuery, sessionId);
+            isDataInserted = true;
           }else{
-            let query1 = {'user':userConnected};
-            let query2 = {$set: {'userQuery':userQuery}};
-            updateDocument(query1,query2, collection);
+            updateUserInputMessage(userConnected,userQuery);
           }
-          
-
           // get intent deatils and response
-          //const intent = utils.check_intent(data.message);
-          const intentDetails = await utils.getIntentDetailsFromDF(data.message);
-          const [intent, bot_message] = intentDetails;
+          const intent = utils.check_intent(data.message);
+          //const intentDetails = await utils.getIntentDetailsFromDF(data.message);
+          //const [intent, bot_message] = intentDetails;
           console.log("Intent name: ", intent);
-
-          // store intents in db
-          let query2 = [{
-            sessionId: sessionId,
-            user: userConnected,
-            intentVisited: intent
-          }];
-          collection = 'Intent';
-          insertDocuments(query2, collection);
-
+          intents.push(intent);
+         if(!isIntentVisited){
+           saveIntentVisited(userConnected, intents,sessionId);
+           isIntentVisited = true;
+         }else{
+           updateIntentVisited(userConnected, intents);
+         }
           // get Bot reply message
-          //const bot_message = utils.getBotMessage(intent);
+          const bot_message = utils.getBotMessage(intent); 
           console.log('Bot Message:', bot_message);
           data.message = bot_message;
           data.nick = 'FinBot';
@@ -136,7 +135,7 @@ io.on("connection",(socket)=>{
       });
 })
 
-// Api to get 
+// Api to get current user details
 app.get('/currentUser',(req, res)=>{
   let session = req.session;
   req.session.user = userConnected;
@@ -146,35 +145,34 @@ app.get('/currentUser',(req, res)=>{
   })
 });
 
+// API to get total number of users taken chat
 app.get('/totalUsers',async (req, res)=>{
-  const collection = 'Users';
-  const query = {};
-  const query2 = {user: 1,_id: 0};
-  const totalUsers = await findDocuments(query, query2,collection);
-  console.log('Total Users: ', totalUsers);
+  const userVisitedBot = await getTotalUsersVisitedBot();
   res.send({
-    totalUsers: totalUsers.length,
-    user: totalUsers
+    NumberOfuserVisitedBot: userVisitedBot
   });
 });
 
+// API to get total number users who completed chat
 app.get('/completedUser',async (req, res)=>{
-  let collection = "Intent";
-  let query = {intentVisited:'no_thanks'};
-  const totalUsers = await findDocuments(query, '',collection);
-  res.send({
-    Count: totalUsers.length,
-    user: totalUsers 
-  });
+
+  const comletedUsers = await getCompletedUserdeatils();
+  
+  res.send(comletedUsers);
 });
 
+// API to get disconnected users
 app.get('/disconnectedUser',async (req, res)=>{
-  let collection = "Users";
-  let query = {status:'disconnect'};
-  let query2 = {"user": {$ne:null}}
-  const totalUsers = await findDocuments(query, query2,collection);
-  res.send({
-    Count: totalUsers.length,
-    user: totalUsers
-  });
+
+  const disconnectedUsers = await getDisconnectedUserDetails();
+  
+  res.send(disconnectedUsers);
 });
+
+app.get('/deleteData', async(req,res)=>{
+  const collection = req.query.col;
+  console.log('collection: ', collection);
+  const query = {}
+  const deleteItem = await removeDocument(query, collection);
+  res.send(`Successfully deleted data ${deleteItem}`);
+})
