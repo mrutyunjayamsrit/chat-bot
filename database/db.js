@@ -6,16 +6,15 @@ const URL = MongoURL;
 const DbName = 'chatApp';
 let db = '';
 
+
+
 MongoClient.connect(URL, (error, client) => {
   if (error) {
     console.log('DB connect failure');
     return;
   }
-
   console.log('DB connected successfully');
-
   db = client.db(DbName);
-  // console.log("DB: ", db);
 });
 
 insertDocuments = (content, collection1) => {
@@ -23,7 +22,6 @@ insertDocuments = (content, collection1) => {
 
   collection.insertMany(content, (error, result) => {
     if (error) {
-      console.log('DB insert failed');
       console.log('DB insert failed');
     }
     if (result) {

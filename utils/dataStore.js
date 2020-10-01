@@ -78,11 +78,22 @@ function updateIntentVisited(user, intents, sessionId){
 
 async function getTotalUsersVisitedBot(){
     const collection = 'Users';
+    const userDetails = [];
     const query = {};
     const query2 = {user: 1,_id: 0};
     const totalUsers = await findDocuments(query, query2,collection);
+    for(let userData of totalUsers){
+        let data = {
+            user: userData.user,
+            session: userData.sessionId
+        }
+        userDetails.push(data);
+    }
     console.log('Total Users: ', totalUsers);
-    return totalUsers.length;
+    return {
+    NumberOfuserVisitedBot: totalUsers.length,
+    userDetails: userDetails 
+  };
 }
 
 async function getCompletedUserdeatils(){

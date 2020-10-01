@@ -1,5 +1,7 @@
 loglevel: debug
 
-MongoURL: mongodb://localhost:27017/
+#MongoURL: mongodb://localhost:27017/
 
-#MongoURL: 'mongodb+srv://root:root@auth-qhv4r.mongodb.net/'
+MongoURL: 'mongodb+srv://root:root@auth-qhv4r.mongodb.net/'
+
+token: dXNlcm5hbWUgLSBmaW5zZXJ2ZWJvdApwYXNzd29yZC0gUGFzcy13MHJk

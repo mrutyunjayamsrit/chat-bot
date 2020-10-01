@@ -16,7 +16,8 @@ const {
   saveIntentVisited,
   updateIntentVisited,
   getCompletedUserdeatils,
-  getDisconnectedUserDetails
+  getDisconnectedUserDetails,
+  getTotalUsersVisitedBot
 } = require('./utils/dataStore');
 
 const db = require('./database/db');
@@ -50,6 +51,18 @@ app.use(express.static(path.join(__dirname,"public")));
 // For parsing the post request body and get requests 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+// To authenticate all the API's
+app.use('/',(req,res,next)=>{
+  const token = config.token;
+  const userToken = req.query.token;
+  if(token === userToken){
+    next();
+  }else{
+    res.status(401);
+    res.send('Authentication Failed!');
+  }
+})
 
 app.get('/',(req,res)=>{
   res.sendFile('index.html', { root: __dirname });
@@ -111,9 +124,9 @@ io.on("connection",(socket)=>{
             updateUserInputMessage(userConnected,userQuery);
           }
           // get intent deatils and response
-          const intent = utils.check_intent(data.message);
-          //const intentDetails = await utils.getIntentDetailsFromDF(data.message);
-          //const [intent, bot_message] = intentDetails;
+          //const intent = utils.check_intent(data.message);
+          const intentDetails = await utils.getIntentDetailsFromDF(data.message);
+          const [intent, bot_message] = intentDetails;
           console.log("Intent name: ", intent);
           intents.push(intent);
          if(!isIntentVisited){
@@ -123,7 +136,7 @@ io.on("connection",(socket)=>{
            updateIntentVisited(userConnected, intents);
          }
           // get Bot reply message
-          const bot_message = utils.getBotMessage(intent); 
+          //const bot_message = utils.getBotMessage(intent); 
           console.log('Bot Message:', bot_message);
           data.message = bot_message;
           data.nick = 'FinBot';
@@ -148,24 +161,18 @@ app.get('/currentUser',(req, res)=>{
 // API to get total number of users taken chat
 app.get('/totalUsers',async (req, res)=>{
   const userVisitedBot = await getTotalUsersVisitedBot();
-  res.send({
-    NumberOfuserVisitedBot: userVisitedBot
-  });
+  res.send(userVisitedBot);
 });
 
 // API to get total number users who completed chat
 app.get('/completedUser',async (req, res)=>{
-
   const comletedUsers = await getCompletedUserdeatils();
-  
   res.send(comletedUsers);
 });
 
 // API to get disconnected users
 app.get('/disconnectedUser',async (req, res)=>{
-
   const disconnectedUsers = await getDisconnectedUserDetails();
-  
   res.send(disconnectedUsers);
 });
 

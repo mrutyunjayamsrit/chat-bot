@@ -42,8 +42,19 @@ FinBot: Awesome Happy to assist, Good bye
 
 By using above database collection we can generate a report on number of users connected and the jurney they went through with FinBot and also we can find out how many users disconnected inbetween the flow by disconnect status.
 
+NOTE: Since i am using npm library 'mongodb' instead of mongoose, i haven't written any scemas for collections. We can have schema for all three collection as given below with mongoose library.
+
+ex:- const Schema = MongoClient.schema;
+
+        const usersSchema = new Schema({
+        user: String,
+        sessionId: String,
+        status: String
+        });
+For mongodb.MongoClient db.createCollection() with @$jsonSchema: is allowed in latest version of mongodb above 4.4.1 which is not used currently.
+
 # API's exposed for the report purpose
-    Currently API's are exposed without any security keys. we can add the 64bit security for all the GET requests for authentication.
+    
     1) '/currentUser' - this provides the information on the user who is interacting with bot currently.
         ex: {"sessionId":"a5db2678-c05d-4112-98f8-95c09d9357cf","user":"User828059"}
     2) '/totalUsers' - This provides the information on how many users have taken chat interaction.
@@ -54,6 +65,9 @@ By using above database collection we can generate a report on number of users c
 
     4) '/disconnectedUser' - this api provides the information on how many users disconnectd in-between
         ex: {"user":[{"_id":"5f70df1d1da2d12e4057b137","user":"User175551","sessionId":"6e2e5991-edc7-4dc1-91f9-a1101485736d","status":"disconnect"}],"Count":1}
+
+All the API's secured with basic authentication process where we have to pass auth token along with get request
+Ex: http://localhost:3030/totalUsers?token=<auth_key>
 
 # DialogFlow Interaction:-
     Currently I am using the dialogflow npm module to interact with DF to get train the bot with different utterances and getting response from the dialog flow as an intent. If dialogFlow interaction doesn't work due to proxy restrictions we can use fall back method of json files created 'intent.json' and 'content.json'.
