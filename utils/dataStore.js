@@ -143,14 +143,14 @@ async function getDisconnectedUserDetails(){
     const totalUsers = await findDocuments(query, '',collection1);
     for(let user of totalUsers){
         let intents = user.intentVisited;
-        if(!intents.includes('no_thanks')){
+        if(intents.includes('no_thanks')){
             disconnectedUserCount++;
             users.push(user.user);
         }
     }
-    let disconnectedRate  = (disconnectedUserCount/allUsers.length)*100;
+    let disconnectedRate  = ((allUsers.length-disconnectedUserCount)/allUsers.length)*100;
     return {
-        journeyDisconnectedUsers: disconnectedUserCount,
+        journeyDisconnectedUsers: (allUsers.length-disconnectedUserCount),
         user: users,
         disconnectedRate: `${disconnectedRate}%` 
       }
