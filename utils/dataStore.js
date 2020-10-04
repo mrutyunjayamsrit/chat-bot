@@ -145,6 +145,7 @@ async function getDisconnectedUserDetails(){
         let intents = user.intentVisited;
         if(intents.includes('no_thanks')){
             disconnectedUserCount++;
+        }else{
             users.push(user.user);
         }
     }
