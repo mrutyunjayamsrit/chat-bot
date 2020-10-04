@@ -19,6 +19,13 @@ body {
     border: 3px solid rgb(22, 20, 20);
     border-radius: 25px;
     float: right;
+    scroll-behavior: auto;
+    overflow: auto;
+  }
+
+  .inbox__messages{
+    overflow: auto;
+    bottom: 10;
   }
   
   form input {
@@ -27,8 +34,9 @@ body {
     padding: 10px;
     width: 280px;
     margin-right:0.5% ;
-    position: absolute; 
+    position: fixed;
     bottom: 0;
+    
   }
   
   form button {
@@ -38,9 +46,9 @@ body {
     border-radius: 25px;
     width:50px;
     padding: 10px;
-    position: absolute;
+    position: fixed;
     bottom: 0;
-    right: 0;
+    left: 1120px;
   }
 
   #outgoing__message {

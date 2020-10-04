@@ -28,9 +28,10 @@ FinBot: Awesome Happy to assist, Good bye
 2) DB - chatApp :
     collections:
     1) Users - to store the user details such as user ID and status of the disconnected users
-        ex:- {"_id":{"$oid":"5f707a1cc3505a28d4f758eb"},"user":"User38083","sessionId":"1f621137-9a55-4132-b8ba-207e558c1bbc"}
-
-        {"_id":{"$oid":"5f70df1d1da2d12e4057b137"},"user":"User175551","sessionId":"6e2e5991-edc7-4dc1-91f9-a1101485736d","status":"disconnect"}
+        ex:- {
+                "user": "User780229",
+                "sessionId": "e0138f27-41cf-483e-9450-b37df2a60a99"
+             }
 
     2) UserData - This collection stores the details about user input/queries to bot.
         ex:- {"_id":{"$oid":"5f70cd3c2c2bf44c6cc7abaf"},"sessionId":"71c240cb-a7e8-48a3-816c-d9e902f8fe89","user":"User156407","userQuery":["Hello","I want to check my balance"]}
@@ -58,13 +59,66 @@ For mongodb.MongoClient db.createCollection() with @$jsonSchema: is allowed in l
     1) '/currentUser' - this provides the information on the user who is interacting with bot currently.
         ex: {"sessionId":"a5db2678-c05d-4112-98f8-95c09d9357cf","user":"User828059"}
     2) '/totalUsers' - This provides the information on how many users have taken chat interaction.
-        ex: {"totalUsers":6,"user":[{"_id":"5f707a1cc3505a28d4f758eb","user":"User38083","sessionId":"1f621137-9a55-4132-b8ba-207e558c1bbc"},{"_id":"5f707a68692aae2d348bbf2c","user":"User780992","sessionId":"441b1c12-0d2f-49df-972f-2fb7fed6e789"},{"_id":"5f70821e422f591580b2d542","user":"User664642","sessionId":"be3c1da1-f01e-46e9-80f3-60463da45a08"},{"_id":"5f7082b6b82d3a0838303ba9","user":"User869384","sessionId":"49497a7e-d9cd-4969-a61c-256488fe8e34"},{"_id":"5f70cd2b2c2bf44c6cc7abad","user":"User156407","sessionId":"71c240cb-a7e8-48a3-816c-d9e902f8fe89"},{"_id":"5f70d3d47421b03c6838afb8","user":"User257790","sessionId":"36e6e007-cc17-460a-9748-be3f23d6c674"}]}
+        ex: {
+  "NumberOfuserVisitedBot": 24,
+  "userDetails": [
+    {
+      "user": "User499763",
+      "session": "05af9227-f43b-4eb5-9482-0063590d0de2"
+    },
+    {
+      "user": "User446257",
+      "session": "851e3f04-8882-45f4-ad81-222a7a1d77b0"
+    },
+    {
+      "user": "User487404",
+      "session": "98e12cf6-9ee4-4493-8e0d-55d9bff1bdb6"
+    },
+    {
+      "user": "User140591",
+      "session": "c252a549-0c15-4b68-bbaa-9496c3a1888f"
+    },
+    {
+      "user": "User957679",
+      "session": "d2e3f5bd-c1cf-4a93-8352-64a9f8bae35a"
+    },
+    {
+      "user": "User811817",
+      "session": "cd462403-924c-425a-acf9-ccc83b4533ad"
+    },
+    {
+      "user": "User157291",
+      "session": "e41b3329-1297-4dd5-b2f7-803385f2a850"
+    },.....
+  ]
+}
 
     3) '/completedUser' - This api provides the information on how many users completed the chat successfully
-        ex: {"user":[{"_id":"5f70dc6a08f4cd4fbc1d245d","sessionId":"dfda5dba-d5d0-430b-bcd1-03eeda15e319","user":"User465797","intentVisited":"no_thanks"}],"Count":1}
+        ex: {
+            "journeyCompletedUsers": 6,
+            "user": [
+                "User185675",
+                "User976250",
+                "User89314",
+                "User662913",
+                "User396744",
+                "User533268"
+            ],
+            "completeEngagementRate": "25%"
+           }
 
     4) '/disconnectedUser' - this api provides the information on how many users disconnectd in-between
-        ex: {"user":[{"_id":"5f70df1d1da2d12e4057b137","user":"User175551","sessionId":"6e2e5991-edc7-4dc1-91f9-a1101485736d","status":"disconnect"}],"Count":1}
+        ex: {
+        "journeyDisconnectedUsers": 1,
+        "user": [
+            "User118338",
+            "User446257",
+            "User157291",
+            "User811817",
+            .....
+        ],
+        "disconnectedRate": "75%"
+        }
 
 All the API's secured with basic authentication process where we have to pass auth token along with get request
 Ex: http://localhost:3030/totalUsers?token=<auth_key>
